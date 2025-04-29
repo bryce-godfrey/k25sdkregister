@@ -3,6 +3,14 @@
 
 <head>
   <title>Your Fluent App</title>
+
+  <g:evaluate object="true">
+    var g_ck = gs.getSession().getSessionToken();
+  </g:evaluate>
+  <script>
+    window.g_ck = "$[g_ck]"; 
+  </script>
+
   <script src="./app.tsx" type="module"></script>
 
 </head>

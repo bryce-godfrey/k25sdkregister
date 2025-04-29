@@ -6,7 +6,7 @@ Record({
   data: {
     category: "general",
     name: "k25-sdk-register",
-    direct: false,
+    direct: true,
     html: Now.asset("./index.html"),
   },
 });

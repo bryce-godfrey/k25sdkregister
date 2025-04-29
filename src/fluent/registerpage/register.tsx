@@ -15,45 +15,55 @@ export const Register: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: "Bryce Godfrey",
-      email: "bryce.godfrey@servicenow.com",
-      company: "ServiceNow",
+      name: "",
+      email: "",
+      company: "",
     },
     onSubmit: (values, { setStatus }) => {
-      return new Promise<void>((resolve, reject) => {
-        if ("GlideAjax" in window === false) {
-          console.error("GlideAjax is not available");
-          resolve();
-          navigate("/thanks", { replace: true });
+      return new Promise<void>(async (resolve, reject) => {
+        const formData = new URLSearchParams();
+        formData.append(
+          "sysparm_processor",
+          "sn_k25sdkregister.K25SDKRegister"
+        );
+        formData.append("sysparm_scope", "sn_k25sdkregister");
+        formData.append("sysparm_name", "registerAjax");
+        formData.append("sysparm_user_name", values.name);
+        formData.append("sysparm_user_email", values.email);
+        formData.append("sysparm_user_company", values.company);
+
+        const request = await fetch("/xmlhttp.do", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            Accept: "*/*",
+            "X-Usertoken": window.g_ck,
+          },
+          body: formData.toString(),
+        });
+
+        if (!request.ok) {
+          console.error("Request failed", request);
+          setStatus("Request failed");
+          reject("Request failed");
           return;
         }
 
-        //@ts-expect-error
-        const ajax = new GlideAjax("sn_k25sdkregister.K25SDKRegister");
-        ajax.addParam("sysparm_scope", "sn_k25sdkregister");
-        ajax.addParam("sysparm_name", "registerAjax");
-        ajax.addParam("sysparm_user_name", values.name);
-        ajax.addParam("sysparm_user_email", values.email);
-        ajax.addParam("sysparm_user_company", values.company);
+        const text = await request.text();
+        const parsed = new window.DOMParser().parseFromString(text, "text/xml");
 
-        console.log("Sending data to server:", values);
+        console.info(parsed);
 
-        ajax.getXML((response) => {
-          const data = JSON.parse(
-            response.responseXML.documentElement.getAttribute("answer")
-          );
+        const data = JSON.parse(parsed.documentElement.getAttribute("answer")!);
 
-          console.warn(data);
+        if (!data.success) {
+          setStatus(data.message);
+          reject(data.message);
+          return;
+        }
 
-          if (data.success) {
-            setStatus(data.message);
-            reject(data.message);
-            return;
-          }
-
-          resolve();
-          navigate("/thanks", { replace: true });
-        });
+        resolve();
+        navigate("/thanks", { replace: true });
       });
     },
   });
@@ -144,3 +154,10 @@ export const Register: React.FC = () => {
     </div>
   );
 };
+
+declare global {
+  interface Window {
+    //ServiceNow token
+    g_ck: string;
+  }
+}
