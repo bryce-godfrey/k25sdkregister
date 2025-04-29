@@ -52,8 +52,6 @@ export const Register: React.FC = () => {
         const text = await request.text();
         const parsed = new window.DOMParser().parseFromString(text, "text/xml");
 
-        console.info(parsed);
-
         const data = JSON.parse(parsed.documentElement.getAttribute("answer")!);
 
         if (!data.success) {

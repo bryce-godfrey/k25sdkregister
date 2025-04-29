@@ -7,7 +7,7 @@ export const Thanks: React.FC = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      // navigate("/", { replace: true }); // Redirect to the home page
+      navigate("/", { replace: true }); // Redirect to the home page
     }, 5000); // Redirect to the home page after 5 seconds
   }, []);
 
