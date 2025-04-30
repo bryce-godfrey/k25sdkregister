@@ -19,20 +19,21 @@ export const sn_k25sdkregister_attendees = Table({
       maxLength: 255,
       mandatory: false,
     }),
-    plan_to_use_soon: ChoiceColumn({
-      label: "Plan to use soon",
+    comments: StringColumn({
+      label: "Comments",
+      maxLength: 5000,
+    }),
+    plan_to_use: ChoiceColumn({
+      label: "Plan to use",
       choices: {
-        1: {
-          label: "Right now",
+        convert_existing_app: {
+          label: "Convert existing app",
         },
-        4: {
-          label: "Within 1 month",
+        build_new_app: {
+          label: "Build new app",
         },
-        12: {
-          label: "Within 3 months",
-        },
-        24: {
-          label: "Within 6 months",
+        investigate: {
+          label: "Investigate",
         },
       },
     }),
@@ -40,10 +41,10 @@ export const sn_k25sdkregister_attendees = Table({
       label: "Dev team size",
       choices: {
         1: {
-          label: "1 (just me)",
+          label: "1",
         },
         5: {
-          label: "< 5",
+          label: "2-5",
         },
         10: {
           label: "6-10",
@@ -54,11 +55,8 @@ export const sn_k25sdkregister_attendees = Table({
         50: {
           label: "21-50",
         },
-        100: {
-          label: "51-100",
-        },
         9999: {
-          label: "100+",
+          label: "50+",
         },
       },
     }),
